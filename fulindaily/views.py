@@ -8,6 +8,7 @@ WECHAT_TOKEN = "weixinpublicplatform2016"
 
 @csrf_exempt
 def index(request):
+    return HttpResponse('Hellow World')
     if request.method == 'GET':
         response = HttpResponse(checkSignature(request))
         return response
