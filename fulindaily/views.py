@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 import wechatmsg
-from securesettings import WECHAT_TOKEN
+WECHAT_TOKEN = "weixinpublicplatform2016"
 
 
 def logd(msg):
@@ -54,7 +54,7 @@ def handleMsg(postCont):
 
 
 def handleTextMsg(msgDict):
-    pass
+    return wechatmsg.textMsg(msgDict, 'text')
 
 
 def handleEventMsg(msgDict):
