@@ -1,17 +1,23 @@
 import hashlib
-
+import wechatmsg
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 WECHAT_TOKEN = "weixinpublicplatform2016"
 
+def logd(msg):
+    with open("/home/wxl/wechat/logs", "a+") as f:
+        f.write(msg)
+        f.write('\n')
 
 @csrf_exempt
 def index(request):
-    return HttpResponse('Hellow World')
+    logd(request.method)
     if request.method == 'GET':
         response = HttpResponse(checkSignature(request))
         return response
+    elif request.method == 'POST':
+        return HttpResponse(handleMsg(request.body))
     else:
         return HttpResponse('Hello World')
 
@@ -30,3 +36,16 @@ def checkSignature(request):
         return echostr
     else:
         return None
+
+def handleMsg(postCont):
+    logd(str(postCont))
+    msgDict = wechatmsg.parseMsg(postCont)
+    msgType = msgDict['MsgType']
+    if msgType == 'text':
+        msg = ""
+        if msgDict['Content'] == 'account':
+            msg = wechatmsg.textMsg(msgDict, "iqiyi")
+        else:
+            msg =  wechatmsg.textMsg(msgDict, "nothing")
+        logd(msg)
+        return msg
