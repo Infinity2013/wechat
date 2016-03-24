@@ -1,14 +1,17 @@
 import hashlib
-import wechatmsg
+
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-WECHAT_TOKEN = "weixinpublicplatform2016"
+import wechatmsg
+from securesettings import WECHAT_TOKEN
+
 
 def logd(msg):
     with open("/home/wxl/wechat/logs", "a+") as f:
         f.write(msg)
         f.write('\n')
+
 
 @csrf_exempt
 def index(request):
@@ -37,15 +40,46 @@ def checkSignature(request):
     else:
         return None
 
+
 def handleMsg(postCont):
     logd(str(postCont))
     msgDict = wechatmsg.parseMsg(postCont)
     msgType = msgDict['MsgType']
+    msg = ""
     if msgType == 'text':
-        msg = ""
-        if msgDict['Content'] == 'account':
-            msg = wechatmsg.textMsg(msgDict, "iqiyi")
-        else:
-            msg =  wechatmsg.textMsg(msgDict, "nothing")
-        logd(msg)
-        return msg
+        msg = handleTextMsg(msgDict)
+    elif msgType == 'event':
+        msg = handleEventMsg(msgDict)
+    return msg
+
+
+def handleTextMsg(msgDict):
+    pass
+
+
+def handleEventMsg(msgDict):
+    pass
+
+
+def handleImageMsg(msgDict):
+    pass
+
+
+def handleVoiceMsg(msgDict):
+    pass
+
+
+def handleVideoMsg(msgDict):
+    pass
+
+
+def handleShortvideoMsg(msgDict):
+    pass
+
+
+def handleLocationMsg(msgDict):
+    pass
+
+
+def handleLinkMsg(msgDict):
+    pass
