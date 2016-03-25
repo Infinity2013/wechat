@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import wechatmsg
 WECHAT_TOKEN = "weixinpublicplatform2016"
-
+isVacation = False
 
 def logd(msg):
     with open("/home/wxl/wechat/logs", "a+") as f:
@@ -54,7 +54,39 @@ def handleMsg(postCont):
 
 
 def handleTextMsg(msgDict):
-    return wechatmsg.textMsg(msgDict, 'text')
+    global isVacation
+    cont = msgDict['Content']
+    if cont == '0':
+        return wechatmsg.textMsg(msgDict, help())
+    if cont == '1':
+        return wechatmsg.textMsg(msgDict, account())
+    if cont == '2':
+        return wechatmsg.textMsg(msgDict, currentShuttle())
+    if cont == 'vacation':
+        isVacation = True
+        return wechatmsg.textMsg(msgDict, "It's on vacation")
+    if cont == 'over':
+        isVacation = False
+        return wechatmsg.textMsg(msgDict, "Vacation is over")
+    else:
+        return wechatmsg.textMsg(msgDict, "Error: Invalid")
+
+
+def help():
+    msg = u'1. 帐号信息\n2. 最近的交大校车\n0.显示此帮助'
+    return msg
+
+
+def account():
+    with open('account.prop', 'r') as f:
+        return "".join(f.readlines())
+
+
+def currentShuttle():
+    if isVacation:
+        return "on vacation"
+    else:
+        return "vacation over"
 
 
 def handleEventMsg(msgDict):
